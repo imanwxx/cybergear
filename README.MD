@@ -4,7 +4,9 @@
 
 ## 1. 硬件
 
-树莓派5、微雪RS485 CAN HAT、CYBERGEAR小米电机
+- 树莓派5
+- 微雪RS485 CAN HAT
+- CYBERGEAR小米电机
 
 ## 2. 依赖
 
