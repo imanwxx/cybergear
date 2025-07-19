@@ -147,6 +147,10 @@ class CANMotorController:
         self.send_command(motor_id,"start")
         print(f"使能电机{motor_id}")
         self.motor_state = True
+    def set_id(self,motor_id,set_id):
+        print(f"将电机id从{motor_id}设置为{set_id}")
+        self.send_command(motor_id,"set_id",set_id = set_id)
+        time.sleep(1)
     def damping_cmd(self,motor_id,kd):
         self.send_command(motor_id,"run",torque=0,vel_limit=0,pos=0,kp=0,kd=kd)
         print("进入阻尼模式")
@@ -169,6 +173,7 @@ class CANMotorController:
             time.sleep(0.005)
         self.flush_buffer()
     def set_zero_cmd(self,motor_id):
+        print("设置当前位置为0")
         self.send_command(motor_id, "set_zero")
         self.flush_buffer()
         time.sleep(1)
@@ -242,14 +247,21 @@ class CANMotorController:
         }
 
     
-    def send_command(self, motor_id: int, action: str, set_id: int = 0,torque: float = 0.0, vel_limit: float = 0, pos: float = 0.0,kp: float = 5.0, kd: float = 0.5,torque_limit: float = 10):
+    def send_command(self, motor_id: int, action: str, set_id: int = 127,torque: float = 0.0, vel_limit: float = 0, pos: float = 0.0,kp: float = 5.0, kd: float = 0.5,torque_limit: float = 10):
         """发送控制命令"""
         motor_id = int(motor_id)
         if action == "start":
             can_id = self.START_CMD_PREFIX | motor_id
             data = bytes(8)
+        elif action =="set_id":
+            if self.motor_state == True:
+                self.shutdown()
+                raise Exception("请在电机未使能状态设置id！！！")
+            else:
+                can_id = self.SET_ID_CMD_PREFIX | motor_id | set_id <<16
+                data = bytes(8)
         elif action == "set_torque_limit":
-            can_id = self.WRITE_PARAM_CMD_PREFIX | motor_id
+            can_id = self.WRITE_PARAM_CMD_PREFIX | motor_id 
             data = bytearray(8)
             data[0] = 0x0B
             data[1] = 0x70
@@ -279,18 +291,15 @@ class CANMotorController:
             data = bytes(data)
         else:
             raise ValueError("无效动作类型 (支持: start/run/stop)")
-        
         # 创建并发送消息
         msg = can.Message(
             arbitration_id=can_id,
             data=data,
             is_extended_id=True
         )
+        # print(msg)
         try:
-        
             self.bus.send(msg)
-            send_end_time = time.monotonic()
-            
         except can.CanError as e:
             raise RuntimeError(f"CAN发送失败: {e}")
     
