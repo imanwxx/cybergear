@@ -1,4 +1,4 @@
-[English](#english-version) | [中文](#中文版)
+[English](#English-version) | [中文](#中文版)
 # 中文版
 # CYBERGEAR电机控制代码
 
@@ -47,7 +47,7 @@ python cybergear.py
 
 目前实现的效果有使能电机、失能电机、位置控制、位置插值控制、力矩控制、阻尼模式、设置零位、监听电机数据（角度、角速度、力矩、温度）。
 
-# english-version
+# English-version
 
 # CYBERGEAR Motor Control Code
 ## 1. Hardware
