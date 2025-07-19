@@ -47,7 +47,7 @@ python cybergear.py
 
 # english-version
 
-CYBERGEAR Motor Control Code
+# CYBERGEAR Motor Control Code
 ## 1. Hardware
 - Raspberry Pi 5
 - Waveshare RS485 CAN HAT
